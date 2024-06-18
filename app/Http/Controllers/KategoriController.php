@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kategori;
 use App\Models\Barang;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -13,13 +14,25 @@ class KategoriController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all Kategori records
-        $rsetKategori = Kategori::all();
-
-        // Return the index view with the Kategori data
-        return view('v_latihan.index', compact('rsetKategori'));
+        $search = $request->input('search');
+     
+        $query = DB::table('kategori')
+                   ->select('id', 'deskripsi', 'kategori as kat');
+    
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $search . '%')
+                  ->orWhere('kategori', 'like', '%' . $search . '%');
+            });
+        }
+    
+        $rsetKategori = $query->paginate(5);
+        Paginator::useBootstrap();
+    
+        return view('v_kategori.index', compact('rsetKategori'));
     }
 
     /**
@@ -30,7 +43,7 @@ class KategoriController extends Controller
     public function create()
     {
         // Return the create form view
-        return view('v_latihan.create');
+        return view('v_kategori.create');
     }
 
     /**
@@ -45,17 +58,29 @@ class KategoriController extends Controller
         $request->validate( [
             'deskripsi' => 'required|string|max:100',
             'kategori' => 'required|in:B,A',
-        ]);        
-
-        // Create a new Kategori record
-        Kategori::create([
-            'deskripsi' => $request->deskripsi,
-            'kategori' => $request->kategori,
+        ], [
+            'deskripsi.required' => 'Deskripsi harus diisi.',
+            'kategori.required' => 'Kategori harus diisi.',
         ]);
+    
+        DB::beginTransaction();
+    
+        try {
+            Kategori::create([
+                'deskripsi' => $request->deskripsi,
+                'kategori' => $request->kategori,
+            ]);
+    
+            DB::commit();
+    
+            return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Disimpan!']);
+            } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors(['message' => 'Terjadi kesalahan saat menyimpan data.'])->withInput();
+            }     
 
-        // Redirect to the index page with a success message
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil disimpan.');
-    }
+    }   
+    
 
     /**
      * Display the specified resource.
@@ -69,7 +94,7 @@ class KategoriController extends Controller
         $rsetKategori = Kategori::find($id);
 
         // Return the show view with the Kategori data
-        return view('v_latihan.show', compact('rsetKategori'));
+        return view('v_kategori.show', compact('rsetKategori'));
     }
 
     /**
@@ -84,7 +109,7 @@ class KategoriController extends Controller
         $rsetKategori = Kategori::find($id);
 
         // Return the edit form view with the Kategori data
-        return view('v_latihan.edit', compact('rsetKategori'));
+        return view('v_kategori.edit', compact('rsetKategori'));
     }
 
     /**

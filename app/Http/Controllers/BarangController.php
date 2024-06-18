@@ -5,16 +5,36 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Kategori; // Pastikan untuk mengimpor model Kategori
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rsetBarang = Barang::all();
+        $search = $request->search;
+        
+        $query = DB::table('barang')
+                    ->select('barang.id', 'barang.merk', 'barang.seri', 'barang.spesifikasi', 'barang.stok', 'barang.kategori_id', 'kategori.deskripsi');
+    
+        $query->leftJoin('kategori', 'barang.kategori_id', '=', 'kategori.id');
+    
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('barang.merk', 'like', '%' . $search . '%')
+                  ->orWhere('barang.seri', 'like', '%' . $search . '%')
+                  ->orWhere('barang.spesifikasi', 'like', '%' . $search . '%')
+                  ->orWhere('kategori.deskripsi', 'like', '%' . $search . '%'); // Search in category name
+            });
+        }
+    
+        $rsetBarang = $query->paginate(5);
+        Paginator::useBootstrap();
+        
         return view('v_barang.index', compact('rsetBarang'));
+
     }
 
     public function create()

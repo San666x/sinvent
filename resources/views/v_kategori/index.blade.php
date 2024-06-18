@@ -1,4 +1,4 @@
-@extends('layouts.adm-main')
+@extends ('layouts.adm-main')
 
 @section('content')
     <div class="container">
@@ -6,15 +6,16 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                    <div class="container">
+                        <div class="container">
                             <div class="row">
                                 <div class="col-md-6 text-left">
-                                    <a href="{{ route('barangkeluar.create') }}" class="btn btn-md btn-success btn-sm pull-right">TAMBAH BARANG KElUAR</a>
+                                    <a href="{{ route('kategori.create') }}" class="btn btn-md btn-success mb-3">TAMBAH KATEGORI</a>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <form action="/barangkeluar" method="GET" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                                        @csrf
-                                        <div class="input-group">
+                                    <form action="/kategori" method="GET"
+                                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                    @csrf
+                                    <div class="input-group">
                                             <input type="text" name="search" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('search') }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary" type="submit">
@@ -33,27 +34,23 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>TANGGAL KELUAR</th>
-                            <th>QUANTITY KELUAR</th>
-                            <th>BARANG ID</th>
-                            <!-- <th>STOK</th>
-                            <th>KATEGORI_ID</th> -->
-                            <!-- <th>FOTO</th> -->
+                            <th>DESKRIPSI</th>
+                            <th>KATEGORI</th>
+                         
                             <th style="width: 15%">AKSI</th>
 
                         </tr>
                     </thead>
                     <tbody>
-                    @forelse ($rsetBarangKeluar as $index => $rowbarangkeluar)
+                    @forelse ($rsetKategori as $index => $rowkategori)
                             <tr>
-                                <td>{{ $loop->iteration + ($rsetBarangKeluar->currentPage() - 1) * $rsetBarangKeluar->perPage() }}</td>
-                                <td>{{ $rowbarangkeluar->tgl_keluar  }}</td>
-                                <td>{{ $rowbarangkeluar->qty_keluar  }}</td>
-                                <td>{{ $rowbarangkeluar->barang_id  }} - {{ $rowbarangkeluar->merk }}</td>
+                            <td>{{ $loop->iteration + ($rsetKategori->currentPage() - 1) * $rsetKategori->perPage() }}</td>
+                                <td>{{ $rowkategori->deskripsi  }}</td>
+                                <td>{{ $rowkategori->kat ?? 'Kategori Tidak Ditemukan'  }}</td>
                                 <td class="text-center"> 
-                                    <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('barangkeluar.destroy', $rowbarangkeluar->id) }}" method="POST">
-                                        <a href="{{ route('barangkeluar.show', $rowbarangkeluar->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
-                                        <a href="{{ route('barangkeluar.edit', $rowbarangkeluar->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil-alt"></i></a>
+                                    <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('kategori.destroy', $rowkategori->id) }}" method="POST">
+                                        <a href="{{ route('kategori.show', $rowkategori->id) }}" class="btn btn-sm btn-dark"><i class="fa fa-eye"></i></a>
+                                        <a href="{{ route('kategori.edit', $rowkategori->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-pencil-alt"></i></a>
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
@@ -63,13 +60,23 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center">Data Barang Keluar belum tersedia</td>
+                                <td colspan="5" class="text-center">Data Kategori belum tersedia</td>
                             </tr>
                         @endforelse
                     </tbody>
-                    
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('Gagal'))
+    <div class="alert alert-danger">
+        {{ session('Gagal') }}
+ </div>
+@endif
                 </table>
-                {{-- {{ $barangkeluar->links() }} --}}
+                {{-- {{ $rsetKategori->links() }} --}}
 
             </div>
         </div>

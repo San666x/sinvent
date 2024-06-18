@@ -116,7 +116,7 @@ class BarangController extends Controller
 
     public function destroy($id)
     {
-        if (DB::table('barangmasuk')->where('barang_id', $id)->exists() || DB::table('barangkeluar')->where('barang_id', $id)->exists()){
+        if (DB::table('barangmasuks')->where('barang_id', $id)->exists() || DB::table('barangkeluar')->where('barang_id', $id)->exists()){
             return redirect()->route('barang.index')->with(['Gagal' => 'Data Gagal Dihapus!']);
         } else {
             $rsetKategori = Barang::find($id);

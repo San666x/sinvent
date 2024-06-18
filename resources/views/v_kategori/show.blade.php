@@ -1,61 +1,41 @@
 @extends('layouts.adm-main')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Show Kategori</h4>
-                </div>
-                <div class="card-body">
-                    <table class="table">
-                        @forelse ($rsetKategori as $index => $kategori)
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+               <div class="card border-0 shadow rounded">
+                    <div class="card-body">
+                        <table class="table">
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $kategori->deskripsi }}</td>
-                                <td>{{ $kategori->kategori }}</td>
+                                <td>Deskripsi</td>
+                                <td>{{ $rsetKategori->deskripsi }}</td>
+                            </tr>
+                            <tr>
+                                <td>Kategori</td>
                                 <td>
-                                    @switch($kategori->kategori)
-                                        @case('B')
-                                            Bahan
-                                            @break
-                                        @case('A')
-                                            Alat
-                                            @break
-                                    @endswitch
+                                    <span style="font-size: 1rem;">
+                                    {{ $rsetKategori->kategori }}
+                                    </span>
+                                    @if ($rsetKategori->kategori == 'A')
+                                        <span class="badge badge-success badge-inline">Alat</span>
+                                    
+                                    @elseif ($rsetKategori->kategori == 'B')
+                                        <span class="badge badge-primary">Bahan</span>
+                                    
+                                    @endif
                                 </td>
                             </tr>
-                            @empty
-                            <!-- display a message or a default row when the collection is empty -->
-                        @endforelse
-                        <!-- <tr>
-                            <td>ID</td>
-                            <td>{{ $rsetKategori->id }}</td>
-                        </tr>
-                        <tr>
-                            <td>DESKRIPSI</td>
-                            <td>{{ $rsetKategori->deskripsi }}</td>
-                        </tr>
-                        <tr>
-                            <td>KATEGORI</td>
-                            <td>{{ $rsetKategori->kategori }}</td>
-                            <td>
-                                @if($rsetKategori->kategori == 'B')
-                                Bahan
-                                @elseif(@rsetKategori->kategori == 'A')
-                                Alat
-                            </td>
-                        </tr> -->
-                    </table>
-                </div>
+                        </table>
+                    </div>
+               </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12  text-center">
+                
+                <a href="{{ route('kategori.index') }}" class="btn btn-md btn-primary mt-3">Back</a>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12  text-center">
-            <a href="{{ route('kategori.index') }}" class="btn btn-md btn-primary mb-3">Back</a>
-        </div>
-    </div>
-</div>
 @endsection

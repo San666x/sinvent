@@ -67,9 +67,21 @@
                             </tr>
                         @endforelse
                     </tbody>
-                    
                 </table>
-                {{-- {{ $barangkeluar->links() }} --}}
+                @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    <div class="d-flex justify-content-end">
+                        {{ $rsetBarangKeluar->links() }} 
+                    </div>
 
             </div>
         </div>

@@ -25,30 +25,18 @@
                             <label class="font-weight-bold">KATEGORI</label>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kategori" id="kategoriM" value="M" {{ $rsetKategori->kategori == 'M' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="kategoriM">
-                                    M - Maintenance
+                                <input class="form-check-input" type="radio" name="kategori" id="kategoriB" value="B" {{ $rsetKategori->kategori == 'B' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="kategoriB">
+                                    B - Bahan
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="kategori" id="kategoriA" value="A" {{ $rsetKategori->kategori == 'A' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="kategoriA">
-                                    A - Asset
+                                    A - Alat
                                 </label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kategori" id="kategoriBHP" value="BHP" {{ $rsetKategori->kategori == 'BHP' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="kategoriBHP">
-                                    BHP - Barang Habis Pakai
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kategori" id="kategoriBTHP" value="BTHP" {{ $rsetKategori->kategori == 'BTHP' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="kategoriBTHP">
-                                    BTHP - Barang Tidak Habis Pakai
-                                </label>
-                            </div>
-
+                            
                             @error('kategori')
                                 <div class="alert alert-danger mt-2">
                                     {{ $message }}

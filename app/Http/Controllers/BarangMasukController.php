@@ -77,11 +77,11 @@ class BarangMasukController extends Controller
                 'qty_masuk' => $request->qty_masuk,
                 'barang_id' => $request->barang_id,
             ]);
-    
+
             // Commit transaksi jika semua operasi berhasil
             DB::commit();
-            return redirect()->route('v_barangmasuk.index')->with(['success' => 'Data Barang Masuk Berhasil Disimpan!']);
-        } catch (\Exception $e) {
+            return redirect()->route('barangmasuk.index')->with(['success' => 'Data Barang Masuk Berhasil Disimpan!']);
+        } catch (\Exception $e) { 
             DB::rollback();
             return back()->withErrors(['message' => 'Terjadi kesalahan saat menyimpan data.'])->withInput();
         }
@@ -133,7 +133,7 @@ class BarangMasukController extends Controller
             'barang_id' => $request->barang_id,
         ]);
 
-        return redirect()->route('v_barangmasuk.index')->with(['success' => 'Data Barang Berhasil Disimpan!']);
+        return redirect()->route('barangmasuk.index')->with(['success' => 'Data Barang Berhasil Disimpan!']);
     }
 
     /**
@@ -143,18 +143,28 @@ class BarangMasukController extends Controller
     {
         try {
             $rsetBarangMasuk = barangmasuk::find($id);
-    
-            $stok_barang = $rsetBarangMasuk->barang->stok;
+        
+            if ($rsetBarangMasuk === null) {
+                throw new \Exception('Barang masuk tidak ditemukan');
+            }
+        
+            $rsetBarang = Barang::find($rsetBarangMasuk->barang_id);
+        
+            if ($rsetBarang === null) {
+                throw new \Exception('Barang tidak ditemukan');
+            }
+        
+            $stok_barang = $rsetBarang->stok;
             $qty_masuk = $rsetBarangMasuk->qty_masuk;
             if ($stok_barang < $qty_masuk) {
                 throw new \Exception('Stok barang tidak mencukupi untuk menghapus entri barang masuk ini');
             }
-    
+        
             $rsetBarangMasuk->delete();
-    
-            return redirect()->route('v_barangmasuk.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        
+            return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Dihapus!']);
         } catch (\Exception $e) {
-            return redirect()->route('v_barangmasuk.index')->with(['error' => $e->getMessage()]);
+            return redirect()->route('barangmasuk.index')->with(['error' => $e->getMessage()]);
         }
     }
 }

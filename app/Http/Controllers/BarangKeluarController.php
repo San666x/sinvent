@@ -58,6 +58,8 @@ class BarangkeluarController extends Controller
      */
     public function store(Request $request)
     {
+        $barang = Barang::find($request->barang_id);
+
         $validator = Validator::make($request->all(), [
             'tgl_keluar' => 'required|date|after_or_equal:tgl_masuk',
             'qty_keluar' => 'nullable|integer',
@@ -66,12 +68,12 @@ class BarangkeluarController extends Controller
             'tgl_keluar.after_or_equal' => 'Tanggal keluar harus setelah atau sama dengan tanggal masuk.',
         ]);
         
-        $tgl_masuk = barangmasuk::where('barang_id', $request->barang_id)->value('tgl_masuk');
-        $tgl_keluar = barangkeluar::where('barang_id', $request->barang_id)->value('tgl_keluar');
+        $tgl_masuk = BarangMasuk::where('barang_id', $request->barang_id)->value('tgl_masuk');
+        $tgl_keluar = $request->input('tgl_keluar'); // Get the tgl_keluar value from the request
 
-
+        // dd($validator);
         // Jika tanggal keluar lebih awal dari tanggal masuk, tampilkan pesan kesalahan
-        if ($request->$tgl_keluar < $tgl_masuk) {
+        if ($tgl_keluar < $tgl_masuk) {
             return redirect()->route('barangkeluar.create')->with(['Gagal' => 'Tanggal Keluar Tidak Boleh Lebih Awal Dari Tanggal Masuk']);
         }
         
@@ -80,7 +82,7 @@ class BarangkeluarController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        dd($validator);
+        
 
         $validator->after(function ($validator) use ($barang, $request) {
             if ($barang->stok < $request->qty_keluar) {
